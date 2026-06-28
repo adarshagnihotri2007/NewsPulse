@@ -1,6 +1,6 @@
 from fetcher.news_fetcher import fetch_news
 
-news = fetch_news()
+news = fetch_news("bbc")
 
 for article in news:
 

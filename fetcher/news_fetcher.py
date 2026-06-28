@@ -1,6 +1,7 @@
 import feedparser
-def fetch_news():
-    url = "https://feeds.bbci.co.uk/news/rss.xml"
+from config import RSS_FEEDS
+def fetch_news(source):
+    url = RSS_FEEDS[source]
     feed = feedparser.parse(url)
     news_list = []
 
