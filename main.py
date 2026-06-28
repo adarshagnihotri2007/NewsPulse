@@ -1,10 +1,21 @@
+from config import RSS_FEEDS
 from fetcher.news_fetcher import fetch_news
 
-news = fetch_news("bbc")
+print("Available Sources")
 
-for article in news:
+for source_name in RSS_FEEDS:
+    print(source_name)
 
-    print("Title      :", article["title"])
-    print("Published  :", article["published"])
-    print("Link       :", article["link"])
-    print("-" * 80)
+source = input("Enter Source: ").lower()
+
+if source in RSS_FEEDS:
+    news = fetch_news(source)
+
+    for article in news:
+        print("Title:", article["title"])
+        print("Published:", article["published"])
+        print("Link:", article["link"])
+        print("-" * 80)
+
+else:
+    print("Invalid Source!")
