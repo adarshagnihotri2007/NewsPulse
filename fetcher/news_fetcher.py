@@ -5,7 +5,7 @@ def fetch_news(source):
     feed = feedparser.parse(url)
     news_list = []
 
-    for entry in feed.entries[:5]:
+    for entry in feed.entries[:20]:
         article = {
             "title" : entry.get("title",""),
             "summary" : entry.get("summary",""),
