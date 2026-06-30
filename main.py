@@ -1,32 +1,57 @@
+import csv
+
 from config import RSS_FEEDS
 from fetcher.news_fetcher import fetch_news
 
-print("Available Sources")
 
+print("Available Sources")
 for source_name in RSS_FEEDS:
     print(source_name)
 
-source = input("Enter Source: ").lower()
-keyword = input("Enter Keyword: ").lower()
+source = input("Enter Source: ").strip().lower()
+keyword = input("Enter Keyword: ").strip().lower()
+
 
 if source in RSS_FEEDS:
 
     try:
+
         news = fetch_news(source)
+
+        with open("news.csv", "w", newline="", encoding="utf-8") as file:
+
+            writer = csv.DictWriter(
+                file,
+                fieldnames=["title", "summary", "link", "published"]
+            )
+
+            writer.writeheader()
+
+            for article in news:
+                writer.writerow(article)
+
         found = False
 
         for article in news:
-          if keyword in article["title"].lower():
+
+            title = article.get("title", "")
+            summary = article.get("summary", "")
+
+            if keyword in title.lower() or keyword in summary.lower():
+
                 found = True
 
-                print("Title:", article["title"])
-                print("Published:", article["published"])
-                print("Link:", article["link"])
-                print("-" * 80)
-                
+                print(f"\nTitle      : {title}")
+                print(f"Published  : {article.get('published', 'N/A')}")
+                print(f"Link       : {article.get('link', 'N/A')}")
+                print(f"Summary    : {summary}")
+                print("-" * 100)
+
         if not found:
-            print(f"No articles found for keyword: {keyword}")
-            
+            print(f"\nNo articles found for keyword: {keyword}")
+
+        print("\nNews successfully saved to news.csv")
+
     except Exception as e:
         print("Unable to fetch news!")
         print(f"Error: {e}")
