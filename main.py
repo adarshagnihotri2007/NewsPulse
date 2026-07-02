@@ -2,9 +2,11 @@ import csv
 
 from config import RSS_FEEDS
 from fetcher.news_fetcher import fetch_news
+from database.db import insert_news
 
 
 print("Available Sources")
+
 for source_name in RSS_FEEDS:
     print(source_name)
 
@@ -17,6 +19,8 @@ if source in RSS_FEEDS:
     try:
 
         news = fetch_news(source)
+
+        insert_news(news, source)
 
         with open("news.csv", "w", newline="", encoding="utf-8") as file:
 
@@ -50,7 +54,7 @@ if source in RSS_FEEDS:
         if not found:
             print(f"\nNo articles found for keyword: {keyword}")
 
-        print("\nNews successfully saved to news.csv")
+        print("\nNews successfully saved to PostgreSQL and news.csv")
 
     except Exception as e:
         print("Unable to fetch news!")
