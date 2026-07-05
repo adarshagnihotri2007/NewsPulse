@@ -13,14 +13,16 @@ def connect_db():
 
     return conn
 
+
 def insert_news(news, source):
 
     conn = connect_db()
     cursor = conn.cursor()
 
     query = """
-    INSERT INTO news (title, summary, link, published, source)
-    VALUES (%s, %s, %s, %s, %s)
+    INSERT INTO news
+    (title, summary, link, published, source, sentiment)
+    VALUES (%s, %s, %s, %s, %s, %s)
     ON CONFLICT (link) DO NOTHING;
     """
 
@@ -33,7 +35,8 @@ def insert_news(news, source):
                 article.get("summary", ""),
                 article.get("link", ""),
                 article.get("published", ""),
-                source
+                source,
+                article.get("sentiment", "")
             )
         )
 
