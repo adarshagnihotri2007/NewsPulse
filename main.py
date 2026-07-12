@@ -1,9 +1,12 @@
+from alerts.email_alert import send_search_results
+
 import csv
 
 from config import RSS_FEEDS
 from fetcher.news_fetcher import fetch_news
 from database.db import insert_news
 from sentiment.sentiment import analyze_sentiment
+from alerts.email_alert import send_search_results
 
 
 print("Available Sources")
@@ -59,6 +62,8 @@ if source in RSS_FEEDS or source == "all":
         # ---------- Keyword Search ----------
         found = False
 
+        matched_articles = []
+
         for article in news:
 
             title = article.get("title", "")
@@ -71,6 +76,8 @@ if source in RSS_FEEDS or source == "all":
 
                 found = True
 
+                matched_articles.append(article)
+
                 print(f"\nTitle      : {title}")
                 print(f"Published  : {article.get('published', 'N/A')}")
                 print(f"Link       : {article.get('link', 'N/A')}")
@@ -79,7 +86,27 @@ if source in RSS_FEEDS or source == "all":
                 print("-" * 100)
 
         if not found:
+
             print(f"\nNo articles found for keyword: {keyword}")
+
+        else:
+
+            choice = input(
+                "\n📧 Send these results to your email? (yes/no): "
+            ).strip().lower()
+
+            if choice == "yes":
+
+                receiver_email = input(
+                    "Enter your email: "
+                ).strip()
+
+                send_search_results(
+                    receiver_email,
+                    source,
+                    keyword,
+                    matched_articles
+                )
 
         print("\nNews successfully saved to PostgreSQL and news.csv")
 
