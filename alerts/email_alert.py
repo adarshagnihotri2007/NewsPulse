@@ -1,16 +1,58 @@
+import os
+import csv
 import smtplib
 from email.message import EmailMessage
+from dotenv import load_dotenv
+
+load_dotenv()
+
+def create_csv(results, source, keyword):
+
+    filename = f"{source}_{keyword}_results.csv"
+
+    filepath = os.path.join("temp", filename)
+
+    with open(filepath, "w", newline="", encoding="utf-8") as file:
+
+        writer = csv.DictWriter(
+            file,
+            fieldnames=[
+                "title",
+                "summary",
+                "published",
+                "sentiment",
+                "link"
+            ]
+        )
+
+        writer.writeheader()
+
+        for article in results:
+
+            writer.writerow(
+                {
+                    "title": article.get("title", ""),
+                    "summary": article.get("summary", ""),
+                    "published": article.get("published", ""),
+                    "sentiment": article.get("sentiment", ""),
+                    "link": article.get("link", "")
+                }
+            )
+
+    return filepath
 
 
 def send_search_results(
     receiver_email,
     source,
     keyword,
-    results
+    results,
+    csv_path
 ):
 
-    sender_email = "YOUR_EMAIL@gmail.com"
-    app_password = "YOUR_APP_PASSWORD"
+    sender_email = os.getenv("EMAIL")
+    app_password = os.getenv("APP_PASSWORD")
+    
 
     msg = EmailMessage()
 
@@ -28,14 +70,26 @@ Total Results : {len(results)}
 
 ============================================================
 """
+    if len(results) > 10:
+
+        body += """   
+Showing Top 5 Results.
+Complete report is attached as a CSV file.
+
+============================================================
+"""
 
     if len(results) == 0:
 
         body += "\nNo matching news articles were found.\n"
 
     else:
+        articles_to_send = results
 
-        for index, article in enumerate(results, start=1):
+        if len(results) > 10:
+            articles_to_send = results[:5]
+
+        for index, article in enumerate(articles_to_send, start=1):
 
             body += f"""
 Result {index}
@@ -62,6 +116,16 @@ NewsPulse
 """
 
     msg.set_content(body)
+    if csv_path:
+      with open(csv_path, "rb") as file:
+          
+          msg.add_attachment(
+              file.read(),
+              maintype="application",
+              subtype="octet-stream",
+              filename=os.path.basename(csv_path)
+          )    
+
 
     try:
 
@@ -81,3 +145,9 @@ NewsPulse
 
         print("❌ Failed to send email.")
         print(e)
+
+    finally:
+
+        if csv_path and os.path.exists(csv_path):
+
+            os.remove(csv_path)

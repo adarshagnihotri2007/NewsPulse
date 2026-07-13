@@ -1,12 +1,10 @@
-from alerts.email_alert import send_search_results
-
 import csv
 
 from config import RSS_FEEDS
 from fetcher.news_fetcher import fetch_news
 from database.db import insert_news
 from sentiment.sentiment import analyze_sentiment
-from alerts.email_alert import send_search_results
+from alerts.email_alert import send_search_results, create_csv
 
 
 print("Available Sources")
@@ -101,11 +99,23 @@ if source in RSS_FEEDS or source == "all":
                     "Enter your email: "
                 ).strip()
 
+                csv_path = None
+
+                if len(matched_articles) > 10:
+
+                    csv_path = create_csv(
+                        matched_articles,
+                        source,
+                        keyword
+                    )
+                
+
                 send_search_results(
                     receiver_email,
                     source,
                     keyword,
-                    matched_articles
+                    matched_articles,
+                    csv_path
                 )
 
         print("\nNews successfully saved to PostgreSQL and news.csv")
