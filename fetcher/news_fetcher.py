@@ -2,7 +2,7 @@ import feedparser
 from config import RSS_FEEDS
 
 
-def fetch_news(source):
+def fetch_news(source, limit=20):
 
     news_list = []
     seen_links = set()
@@ -22,7 +22,12 @@ def fetch_news(source):
 
         feed = feedparser.parse(url)
 
-        for entry in feed.entries[:20]:
+        entries = feed.entries
+
+        if limit is not None:
+            entries = entries[:limit]
+
+        for entry in entries:
 
             link = entry.get("link", "")
 
