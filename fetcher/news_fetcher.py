@@ -10,15 +10,15 @@ def fetch_news(source, limit=20):
     # ---------- All Sources ----------
     if source == "all":
 
-        urls = RSS_FEEDS.values()
+        sources = RSS_FEEDS.items()
 
     # ---------- Single Source ----------
     else:
 
-        urls = [RSS_FEEDS[source]]
+        sources = [(source,RSS_FEEDS[source])]
 
     # ---------- Fetch News ----------
-    for url in urls:
+    for source_name, url in sources:
 
         feed = feedparser.parse(url)
 
@@ -41,7 +41,8 @@ def fetch_news(source, limit=20):
                 "title": entry.get("title", ""),
                 "summary": entry.get("summary", ""),
                 "link": link,
-                "published": entry.get("published", "")
+                "published": entry.get("published", ""),
+                "source": source_name
             }
 
             news_list.append(article)

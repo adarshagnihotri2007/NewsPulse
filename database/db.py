@@ -38,7 +38,7 @@ def insert_news(news, source):
                 article.get("summary", ""),
                 article.get("link", ""),
                 article.get("published", ""),
-                source,
+                article.get("source", source),
                 article.get("sentiment", "")
             )
         )
