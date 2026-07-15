@@ -48,6 +48,7 @@ if source in RSS_FEEDS or source == "all":
                     "summary",
                     "link",
                     "published",
+                    "source",
                     "sentiment"
                 ]
             )
@@ -78,6 +79,7 @@ if source in RSS_FEEDS or source == "all":
 
                 print(f"\nTitle      : {title}")
                 print(f"Published  : {article.get('published', 'N/A')}")
+                print(f"Source     : {article.get('source', 'N/A')}")
                 print(f"Link       : {article.get('link', 'N/A')}")
                 print(f"Summary    : {summary}")
                 print(f"Sentiment  : {article.get('sentiment')}")

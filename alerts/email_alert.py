@@ -20,6 +20,7 @@ def create_csv(results, source, keyword):
                 "title",
                 "summary",
                 "published",
+                "source",
                 "sentiment",
                 "link"
             ]
@@ -34,6 +35,7 @@ def create_csv(results, source, keyword):
                     "title": article.get("title", ""),
                     "summary": article.get("summary", ""),
                     "published": article.get("published", ""),
+                    "source": article.get("source", ""),
                     "sentiment": article.get("sentiment", ""),
                     "link": article.get("link", "")
                 }
@@ -97,6 +99,8 @@ Result {index}
 Title      : {article.get("title", "")}
 
 Published  : {article.get("published", "N/A")}
+
+Source     : {article.get("source", "N/A")}
 
 Sentiment  : {article.get("sentiment", "N/A")}
 
