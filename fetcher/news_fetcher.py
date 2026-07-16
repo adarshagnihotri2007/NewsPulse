@@ -35,7 +35,11 @@ def fetch_news(source, limit=20):
             published = entry.get("published", "")
 
             try:
-                published = parsedate_to_datetime(published).isoformat()
+                published = (
+                    parsedate_to_datetime(published)
+                    .replace(tzinfo=None)
+                    .strftime("%Y-%m-%d %H:%M:%S")
+                )
 
             except Exception:  
                 pass  
