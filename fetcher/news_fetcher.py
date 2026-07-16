@@ -1,4 +1,5 @@
 import feedparser
+from email.utils import parsedate_to_datetime
 from config import RSS_FEEDS
 
 
@@ -31,6 +32,19 @@ def fetch_news(source, limit=20):
 
             link = entry.get("link", "")
 
+            published = entry.get("published", "")
+
+            try:
+                published = parsedate_to_datetime(published).isoformat()
+
+            except Exception:  
+                pass  
+
+            # Skip duplicate articles
+            if link in seen_links:
+                continue
+    
+
             # Skip duplicate articles
             if link in seen_links:
                 continue
@@ -41,7 +55,7 @@ def fetch_news(source, limit=20):
                 "title": entry.get("title", ""),
                 "summary": entry.get("summary", ""),
                 "link": link,
-                "published": entry.get("published", ""),
+                "published": published,
                 "source": source_name
             }
 
